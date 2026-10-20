@@ -1,0 +1,123 @@
+
+
+board = [" "] * 9
+current_player = "X"
+game_over = False
+
+
+def print_board():
+    print(f"\n {board[0]} | {board[1]} | {board[2]}")
+    print("---+---+---")
+    print(f" {board[3]} | {board[4]} | {board[5]}")
+    print("---+---+---")
+    print(f" {board[6]} | {board[7]} | {board[8]}")
+    print()
+
+
+win_conditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+]
+
+
+while not game_over:
+
+    print_board()
+
+    while True:
+        try:
+            move = int(input(
+                f"Player {current_player}, choose a spot (1-9): "
+            )) - 1
+
+            if 0 <= move <= 8 and board[move] == " ":
+                board[move] = current_player
+                break
+            else:
+                print("That spot is taken or out of bounds. Try again.")
+
+        except ValueError:
+            print("Please enter a number between 1 and 9.")
+
+    # Check if current player has won
+    has_won = any(
+        all(board[i] == current_player for i in combo)
+        for combo in win_conditions
+    )
+
+    if has_won:
+        print_board()
+        print(f"Player {current_player} wins!")
+        game_over = True
+
+    # Check for draw
+    elif " " not in board:
+        print_board()
+        print("It's a draw!")
+        game_over = True
+
+    # Change player
+    else:
+        current_player = "O" if current_player == "X" else "X"
+     
+   |   |  
+---+---+---
+   |   |  
+---+---+---
+   |   |  
+
+Player X, choose a spot (1-9): 1
+
+ X |   |  
+---+---+---
+   |   |  
+---+---+---
+   |   |  
+
+Player O, choose a spot (1-9): 5
+
+ X |   |  
+---+---+---
+   | O |  
+---+---+---
+   |   |  
+
+Player X, choose a spot (1-9): 2
+
+ X | X |  
+---+---+---
+   | O |  
+---+---+---
+   |   |  
+
+Player O, choose a spot (1-9): 3
+
+ X | X | O
+---+---+---
+   | O |  
+---+---+---
+   |   |  
+
+Player X, choose a spot (1-9): 4
+
+ X | X | O
+---+---+---
+ X | O |  
+---+---+---
+   |   |  
+
+Player O, choose a spot (1-9): 7
+
+ X | X | O
+---+---+---
+ X | O |  
+---+---+---
+ O |   |  
+
+Player O wins!
