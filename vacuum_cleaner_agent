@@ -1,0 +1,72 @@
+
+
+import random
+import time
+
+# Initial state of rooms
+room_A = random.choice(["Dirty", "Clean"])
+room_B = random.choice(["Dirty", "Clean"])
+
+current_room = "A"
+
+print("Initial State:")
+print("Room A:", room_A)
+print("Room B:", room_B)
+print()
+
+while True:
+
+    if current_room == "A":
+
+        if room_A == "Dirty":
+            print("Room A is Dirty -> Cleaning...")
+            room_A = "Clean"
+            time.sleep(1)
+
+        else:
+            print("Room A is already Clean")
+
+        print("Moving Right to Room B")
+        current_room = "B"
+        time.sleep(1)
+
+    else:
+
+        if room_B == "Dirty":
+            print("Room B is Dirty -> Cleaning...")
+            room_B = "Clean"
+            time.sleep(1)
+
+        else:
+            print("Room B is already Clean")
+
+        print("Moving Left to Room A")
+        current_room = "A"
+        time.sleep(1)
+
+    # Check whether both rooms are clean
+    if room_A == "Clean" and room_B == "Clean":
+        print()
+        print("Room A and Room B are clean")
+        print("Vacuum Cleaner Stopped.")
+        break
+
+
+print()
+print("Final State:")
+print("Room A:", room_A)
+print("Room B:", room_B)
+     
+Initial State:
+Room A: Dirty
+Room B: Clean
+
+Room A is Dirty -> Cleaning...
+Moving Right to Room B
+
+Room A and Room B are clean
+Vacuum Cleaner Stopped.
+
+Final State:
+Room A: Clean
+Room B: Clean
