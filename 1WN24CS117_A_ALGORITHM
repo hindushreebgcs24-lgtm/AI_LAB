@@ -1,0 +1,230 @@
+
+
+import heapq
+
+# Generate possible moves
+def moves(state):
+    result = []
+    p = state.index(0)
+
+    r = p // 3
+    c = p % 3
+
+    for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
+        nr = r + dr
+        nc = c + dc
+
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            q = nr * 3 + nc
+
+            s = list(state)
+            s[p], s[q] = s[q], s[p]
+
+            result.append(tuple(s))
+
+    return result
+
+
+# Case 1: Misplaced Tiles
+def misplaced(state, goal):
+    count = 0
+
+    for i in range(9):
+        if state[i] != 0 and state[i] != goal[i]:
+            count += 1
+
+    return count
+
+
+# Case 2: Manhattan Distance
+def manhattan(state, goal):
+    distance = 0
+
+    for tile in range(1, 9):
+        p1 = state.index(tile)
+        p2 = goal.index(tile)
+
+        r1, c1 = p1 // 3, p1 % 3
+        r2, c2 = p2 // 3, p2 % 3
+
+        distance += abs(r1 - r2) + abs(c1 - c2)
+
+    return distance
+
+
+# A* Algorithm
+def astar(start, goal, heuristic):
+
+    queue = [(heuristic(start, goal), 0, start, [start])]
+    visited = set()
+
+    while queue:
+
+        f, g, state, path = heapq.heappop(queue)
+
+        if state == goal:
+            return path
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+
+        for new_state in moves(state):
+
+            if new_state not in visited:
+
+                new_g = g + 1
+                new_h = heuristic(new_state, goal)
+                new_f = new_g + new_h
+
+                heapq.heappush(
+                    queue,
+                    (new_f, new_g, new_state, path + [new_state])
+                )
+
+    return None
+
+
+# Print the result
+def print_solution(path, goal, heuristic):
+
+    for i, state in enumerate(path):
+
+        g = i
+        h = heuristic(state, goal)
+        f = g + h
+
+        print("State:")
+        print(state[0:3])
+        print(state[3:6])
+        print(state[6:9])
+
+        print("g(n) =", g)
+        print("h(n) =", h)
+        print("f(n) =", f)
+        print("----------------")
+
+
+# -------- MAIN PROGRAM --------
+
+print("Enter Initial State")
+print("Use 0 for blank")
+
+start = tuple(map(int, input().split()))
+
+print("Enter Goal State")
+
+goal = tuple(map(int, input().split()))
+
+
+# CASE 1
+print("\n===== CASE 1: MISPLACED TILES =====")
+
+path = astar(start, goal, misplaced)
+
+if path:
+    print_solution(path, goal, misplaced)
+else:
+    print("No solution")
+
+
+# CASE 2
+print("\n===== CASE 2: MANHATTAN DISTANCE =====")
+
+path = astar(start, goal, manhattan)
+
+if path:
+    print_solution(path, goal, manhattan)
+else:
+    print("No solution")
+     
+Enter Initial State
+Use 0 for blank
+1 2 3 6 0 4 7 5 8
+Enter Goal State
+1 2 3 6 4 8 0 7 5
+
+===== CASE 1: MISPLACED TILES =====
+State:
+(1, 2, 3)
+(6, 0, 4)
+(7, 5, 8)
+g(n) = 0
+h(n) = 4
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 0)
+(7, 5, 8)
+g(n) = 1
+h(n) = 3
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 8)
+(7, 5, 0)
+g(n) = 2
+h(n) = 2
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 8)
+(7, 0, 5)
+g(n) = 3
+h(n) = 1
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 8)
+(0, 7, 5)
+g(n) = 4
+h(n) = 0
+f(n) = 4
+----------------
+
+===== CASE 2: MANHATTAN DISTANCE =====
+State:
+(1, 2, 3)
+(6, 0, 4)
+(7, 5, 8)
+g(n) = 0
+h(n) = 4
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 0)
+(7, 5, 8)
+g(n) = 1
+h(n) = 3
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 8)
+(7, 5, 0)
+g(n) = 2
+h(n) = 2
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 8)
+(7, 0, 5)
+g(n) = 3
+h(n) = 1
+f(n) = 4
+----------------
+State:
+(1, 2, 3)
+(6, 4, 8)
+(0, 7, 5)
+g(n) = 4
+h(n) = 0
+f(n) = 4
+----------------
