@@ -1,0 +1,104 @@
+
+
+import random
+
+# Calculate the number of attacking queen pairs
+def calculate_cost(state):
+    cost = 0
+    n = len(state)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            # Same row or diagonal attack
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                cost += 1
+
+    return cost
+
+
+# Generate neighbors by moving a queen within its column
+def get_neighbors(state):
+    neighbors = []
+    n = len(state)
+
+    for col in range(n):
+        for row in range(n):
+            if row != state[col]:
+                new_state = state.copy()
+                new_state[col] = row
+                neighbors.append(new_state)
+
+    return neighbors
+
+
+# Hill Climbing with Sideways (Lateral) Moves (Quiet version)
+def hill_climbing_with_sideways_moves(initial_state, max_sideways=100):
+    state = list(initial_state)
+    n = len(state)
+
+    sideways_count = 0
+    steps = 0
+
+    while True:
+        current_cost = calculate_cost(state)
+
+        # Goal state reached
+        if current_cost == 0:
+            print(f"Solution found in {steps} steps!")
+            print("Final state:", state)
+            print_board(state)
+            return
+
+        neighbors = get_neighbors(state)
+        best_neighbors = []
+        best_cost = float('inf')
+
+        # Evaluate all neighbors to find the best cost
+        for neighbor in neighbors:
+            cost = calculate_cost(neighbor)
+            if cost < best_cost:
+                best_cost = cost
+                best_neighbors = [neighbor]
+            elif cost == best_cost:
+                best_neighbors.append(neighbor)
+
+        # Move to best neighbor
+        if best_cost < current_cost:
+            state = random.choice(best_neighbors)
+            sideways_count = 0
+        elif best_cost == current_cost:
+            if sideways_count < max_sideways:
+                state = random.choice(best_neighbors)
+                sideways_count += 1
+            else:
+                print("Failed: Reached maximum sideways moves limit.")
+                return
+        else:
+            print("Failed: Stuck at local minimum.")
+            return
+
+        steps += 1
+
+
+# Display the chessboard
+def print_board(state):
+    n = len(state)
+
+    for row in range(n):
+        for col in range(n):
+            if state[col] == row:
+                print("Q", end=" ")
+            else:
+                print("-", end=" ")
+        print()
+
+
+# Run the algorithm using sideways moves on the initial state [0, 0, 0, 0]
+hill_climbing_with_sideways_moves(initial_state=[1, 2, 4, 3])
+     
+Solution found in 3 steps!
+Final state: [1, 3, 0, 2]
+- - Q - 
+Q - - - 
+- - - Q 
+- Q - - 
