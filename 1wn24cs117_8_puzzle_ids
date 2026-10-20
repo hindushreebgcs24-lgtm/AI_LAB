@@ -1,0 +1,101 @@
+
+
+
+
+# 8 Puzzle using IDS
+
+# Take user input
+print("Enter the initial state (use 0 for blank):")
+start = tuple(map(int, input().split()))
+
+goal = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+
+
+def moves(s):
+    p = s.index(0)
+    r, c = divmod(p, 3)
+
+    # UP, DOWN, LEFT, RIGHT
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            q = nr * 3 + nc
+
+            x = list(s)
+            x[p], x[q] = x[q], x[p]
+
+            yield tuple(x)
+
+
+def dls(s, depth, path):
+
+    if s == goal:
+        return path
+
+    if depth == 0:
+        return None
+
+    for n in moves(s):
+
+        if n not in path:
+            result = dls(n, depth - 1, path + [n])
+
+            if result:
+                return result
+
+    return None
+
+
+def ids():
+    depth = 0
+
+    while True:
+        result = dls(start, depth, [start])
+
+        if result:
+            return result
+
+        depth += 1
+
+
+# Run IDS
+solution = ids()
+
+
+# Print solution
+for i, s in enumerate(solution):
+
+    print("Step", i)
+
+    for j in range(0, 9, 3):
+        print(s[j:j+3])
+
+    print()
+
+print("Total moves:", len(solution) - 1)
+
+     
+Enter the initial state (use 0 for blank):
+1 2 3 0 4 6 7 5 8
+Step 0
+(1, 2, 3)
+(0, 4, 6)
+(7, 5, 8)
+
+Step 1
+(1, 2, 3)
+(4, 0, 6)
+(7, 5, 8)
+
+Step 2
+(1, 2, 3)
+(4, 5, 6)
+(7, 0, 8)
+
+Step 3
+(1, 2, 3)
+(4, 5, 6)
+(7, 8, 0)
+
+Total moves: 3
