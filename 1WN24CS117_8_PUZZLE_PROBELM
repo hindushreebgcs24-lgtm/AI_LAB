@@ -1,0 +1,101 @@
+def dfs(start, goal):
+    stack = [(start, [])]
+
+    while stack:
+        state, path = stack.pop()
+
+        if state == goal:
+            return path + [state]
+
+        if len(path) >= 6:
+            continue
+
+        zero = state.index(0)
+
+        row = zero // 3
+        col = zero % 3
+
+        moves = []
+
+        if col > 0:
+            moves.append(zero - 1)
+        if row > 0:
+            moves.append(zero - 3)
+
+        if row < 2:
+            moves.append(zero + 3)
+
+        if col < 2:
+            moves.append(zero + 1)
+
+        for move in reversed(moves):
+        new_state = list(state)
+            new_state[zero], new_state[move] = \
+                new_state[move], new_state[zero]
+
+            new_state = tuple(new_state)
+
+            stack.append((new_state, path + [state]))
+
+    return None
+
+
+
+print("Enter 9 numbers (0 represents blank):")
+start = tuple(map(int, input().split()))
+
+goal = (
+    1, 2, 3,
+    4, 5, 6,
+    7, 0, 8
+)
+
+solution = dfs(start, goal)
+
+if solution:
+
+    print("\nSolution found!")
+    print("Number of moves:", len(solution) - 1)
+
+    for state in solution:
+        print()
+        print(state[0], state[1], state[2])
+        print(state[3], state[4], state[5])
+        print(state[6], state[7], state[8])
+
+else:
+    print("No solution found within 6 moves.")
+
+Enter 9 numbers (0 represents blank):
+1 2 3 0 4 6 7 5 8
+
+Solution found!
+Number of moves: 6
+
+1 2 3
+0 4 6
+7 5 8
+
+0 2 3
+1 4 6
+7 5 8
+
+1 2 3
+0 4 6
+7 5 8
+
+0 2 3
+1 4 6
+7 5 8
+
+1 2 3
+0 4 6
+7 5 8
+
+1 2 3
+4 0 6
+7 5 8
+
+1 2 3
+4 5 6
+7 0 8
